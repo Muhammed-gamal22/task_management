@@ -1,117 +1,116 @@
+import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { postData } from "@/services/services";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTokenStore } from "@/store/token-store";
+import { ListTodo, Loader2, ArrowRight } from "lucide-react";
 import CustomInput from "@/customs/CustomInput";
 
+import CustomButton from "@/customs/CustomButton";
 
 export default function Login() {
     const navigate = useNavigate();
-    const params = useParams();
+    const { setToken } = useTokenStore();
+
+    const methods = useForm({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
+
     const { mutate, isPending } = useMutation({
         mutationFn: async (data) => postData("/auth/login", data),
         onSuccess: (response) => {
-            localStorage.setItem("token", response.token);
-            toast.success("Login successful!");
-            navigate("/tasks");
+            if (response?.token) {
+                setToken(response.token);
+                localStorage.setItem("token", response.token);
+                toast.success("Logged in successfully!");
+                navigate("/tasks");
+            } else {
+                toast.error("Invalid server response. Token missing.");
+            }
         },
         onError: (error) => {
-            toast.error(error?.response?.data?.message || error.message);
-        },
-    });
-    const methods = useForm({
-        defaultValues: {
-            user_email: "",
-            user_password: "",
-            company_id: "",
+            toast.error(error?.response?.data?.message || error.message || "Failed to log in");
         },
     });
 
-    const onSubmit = async (data) => {
-        await mutate({
-            ...data,
-            company_id: params?.id || "",
-        });
+    const onSubmit = (data) => {
+        mutate(data);
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center  px-4">
-            <Card className="w-full max-w-md shadow-xl">
-                <CardHeader className="space-y-2 text-center">
-                    <CardTitle className="text-2xl flex gap-2 flex-col items-center justify-center font-bold">
-                        <h2>Login</h2>
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 sm:p-6 lg:p-8">
+            <div className="w-full max-w-md space-y-8">
 
-                    </CardTitle>
-                </CardHeader>
-
-                <CardContent>
+                <div className="text-center space-y-2">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto shadow-sm">
+                        <ListTodo className="w-7 h-7" />
+                    </div>
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                        Welcome back
+                    </h1>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Enter your credentials to access your tasks dashboard
+                    </p>
+                </div>
+                <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
                     <FormProvider {...methods}>
-                        <form
-                            onSubmit={methods.handleSubmit(onSubmit)}
-                            className="space-y-5"
-                        >
-                            <div className="space-y-2">
-                                <CustomInput
-                                    rules={{
-                                        required: "البريد الإلكتروني مطلوب",
-                                        pattern: {
-                                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                            message: "الرجاء إدخال بريد إلكتروني صالح"
-                                        }
-                                    }}
-                                    name="email" placeholder="البريد الإلكتروني" type="email" />
-                                <CustomInput
-                                    rules={{
-                                        required: "كلمة المرور مطلوبة",
-                                        minLength: {
-                                            value: 6,
-                                            message:
-                                                "كلمة المرور يجب أن تكون على الأقل 6 أحرف",
-                                        },
-                                    }}
-                                    name="password" placeholder="كلمة المرور" type="password" />
-                                {/* <Label htmlFor="email">البريد الإلكتروني</Label>
-                            <Input
-                                id="email"
+                        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5">
+                            <CustomInput
+                                name="email"
+                                label="Email Address"
+                                placeholder="name@example.com"
                                 type="email"
-                                placeholder="البريد الإلكتروني"
-                                {...register("user_email", {
-                                    required: "البريد الإلكتروني مطلوب",
+                                rules={{
+                                    required: "Email is required",
                                     pattern: {
-                                        value:
-                                            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                        message: "الرجاء إدخال بريد إلكتروني صالح",
+                                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                        message: "Please enter a valid email address",
                                     },
-                                })}
+                                }}
                             />
-
-                            {errors.user_email && (
-                                <p className="text-sm text-destructive">
-                                    {errors.user_email.message}
-                                </p>
-                            )} */}
-                            </div>
-                            <Button
+                            <CustomInput
+                                name="password"
+                                label="Password"
+                                placeholder="••••••••"
+                                type="password"
+                                rules={{
+                                    required: "Password is required",
+                                    minLength: {
+                                        value: 6,
+                                        message: "Password must be at least 6 characters",
+                                    },
+                                }}
+                            />
+                            <CustomButton
                                 type="submit"
-                                className="w-full"
-                                disabled={methods.formState.isSubmitting}
+                                isLoading={isPending || methods.formState.isSubmitting}
+                                className="w-full py-2.5 bg-white hover:bg-primary/90 text-primary-foreground font-semibold flex items-center justify-center gap-2"
                             >
-                                تسجيل الدخول
-                                {/* {isPending ? "جاري تسجيل الدخول..." : "تسجيل الدخول"} */}
-                            </Button>
+                                Sign In
+                                <ArrowRight className="w-4 h-4 ml-1" />
+                            </CustomButton>
                         </form>
                     </FormProvider>
-                </CardContent>
-            </Card>
+
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/register"
+                                className="font-semibold text-primary hover:underline"
+                            >
+                                Create an account
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
+

@@ -6,47 +6,60 @@ const jwt = require("jsonwebtoken");
 
 exports.userLogin = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
-    const user = await User.findOne({
-        email
-    }).select('+password');
-
     if (!email || !password) {
         return next(new AppError("Please provide email and password", 400));
     }
+
+    const user = await User.findOne({ email }).select('+password');
+
     if (!user || !(await user.comparePassword(password))) {
-        return next(new AppError("Invalid email or password ", 401));
+        return next(new AppError("Invalid email or password", 401));
     }
-    if (!user) {
-        return next(new AppError("Unauthorized", 401));
-    }
-    const { _id } = user;
-    const token = jwt.sign({
-        id: _id,
-    }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN
-    });
+
+    const token = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+
+    user.password = undefined;
+
     res.status(200).json({
         status: "success",
-        token: token,
+        token,
         user
     });
 });
 
 exports.register = catchAsync(async (req, res, next) => {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-        return next(new AppError("All fields are required", 400))
+    const { name, email, password, confirmPassword } = req.body;
+    if (!name || !email || !password || !confirmPassword) {
+        return next(new AppError("All fields are required including confirmPassword", 400));
+    }
+    if (password !== confirmPassword) {
+        return next(new AppError("Passwords do not match", 400));
     }
     const userExists = await User.findOne({ email });
     if (userExists) {
-        return next(new AppError("User already exists", 400))
+        return next(new AppError("User with this email already exists", 400));
     }
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email, password, confirmPassword });
+
+    const token = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+
+    user.password = undefined;
+
     res.status(201).json({
+        status: "success",
+        token,
         user,
         message: "User registered successfully"
     });
-})
+});
 
 
 exports.protectUserLogin = catchAsync(async (req, res, next) => {

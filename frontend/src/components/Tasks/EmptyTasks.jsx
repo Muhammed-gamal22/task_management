@@ -16,7 +16,7 @@ const EmptyTasks = ({ openCreateModal, searchQuery, statusFilter, priorityFilter
             {!searchQuery && statusFilter === 'All' && priorityFilter === 'All' && (
                 <button
                     onClick={openCreateModal}
-                    className="inline-flex items-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 text-xs font-semibold px-4 py-2 rounded-lg transition-colors mt-2"
+                    className="inline-flex items-center gap-2 bg-white  text-black hover:bg-primary/20 text-xs font-semibold px-4 py-2 rounded-lg transition-colors mt-2"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     Create Task

@@ -53,7 +53,6 @@ const Task = ({ task, onEdit, onDelete, onStatusChange }) => {
                 {/* Main Info */}
                 <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                        {/* Status Badge Dropdown / Toggle */}
                         <div className="relative inline-block">
                             <select
                                 value={status}
@@ -67,13 +66,11 @@ const Task = ({ task, onEdit, onDelete, onStatusChange }) => {
                             <StatusIcon className={`w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none ${statusStyle.iconColor}`} />
                         </div>
 
-                        {/* Priority Badge */}
+
                         <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-0.5 rounded-full border ${priorityStyle.bg}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${priorityStyle.dot}`} />
                             {priority}
                         </span>
-
-                        {/* Overdue Warning */}
                         {isOverdue && (
                             <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
                                 <AlertCircle className="w-3 h-3" />
@@ -81,20 +78,14 @@ const Task = ({ task, onEdit, onDelete, onStatusChange }) => {
                             </span>
                         )}
                     </div>
-
-                    {/* Task Title */}
                     <h3 className={`text-base font-semibold text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors ${status === 'Done' ? 'line-through text-slate-400 dark:text-slate-500' : ''}`}>
                         {title}
                     </h3>
-
-                    {/* Description */}
                     {description && (
                         <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                             {description}
                         </p>
                     )}
-
-                    {/* Meta Info */}
                     <div className="pt-2 flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
                         <div className="flex items-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -104,8 +95,6 @@ const Task = ({ task, onEdit, onDelete, onStatusChange }) => {
                         </div>
                     </div>
                 </div>
-
-                {/* Actions */}
                 <div className="flex items-center gap-1 self-end sm:self-start pt-2 sm:pt-0">
                     <button
                         onClick={() => onEdit?.(task)}

@@ -29,6 +29,7 @@ export default function Register() {
             name: data.name,
             email: data.email,
             password: data.password,
+            confirmPassword: data.confirmPassword,
         }),
         onSuccess: (response) => {
             if (response?.token) {
@@ -53,7 +54,6 @@ export default function Register() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-md space-y-8">
-                {/* Header */}
                 <div className="text-center space-y-2">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto shadow-sm">
                         <ListTodo className="w-7 h-7" />
@@ -65,12 +65,9 @@ export default function Register() {
                         Join us today and organize your tasks efficiently
                     </p>
                 </div>
-
-                {/* Form Card */}
                 <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
                     <FormProvider {...methods}>
                         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-                            {/* Name Input */}
                             <CustomInput
                                 name="name"
                                 label="Full Name"
@@ -83,7 +80,6 @@ export default function Register() {
                                     },
                                 }}
                             />
-                            {/* Email Input */}
                             <CustomInput
                                 name="email"
                                 label="Email Address"
@@ -97,8 +93,6 @@ export default function Register() {
                                     },
                                 }}
                             />
-
-                            {/* Password Input */}
                             <CustomInput
                                 name="password"
                                 label="Password"
@@ -112,8 +106,6 @@ export default function Register() {
                                     },
                                 }}
                             />
-
-                            {/* Confirm Password Input */}
                             <CustomInput
                                 name="confirmPassword"
                                 label="Confirm Password"
@@ -125,8 +117,6 @@ export default function Register() {
                                         value === passwordValue || "Passwords do not match",
                                 }}
                             />
-
-                            {/* Submit CustomButton */}
                             <CustomButton
                                 type="submit"
                                 isLoading={isPending || methods.formState.isSubmitting}

@@ -50,7 +50,6 @@ const Task = ({ task, onEdit, onDelete, onStatusChange }) => {
     return (
         <div className="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-700">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                {/* Main Info */}
                 <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2.5 flex-wrap">
                         <div className="relative inline-block">
@@ -88,7 +87,7 @@ const Task = ({ task, onEdit, onDelete, onStatusChange }) => {
                     )}
                     <div className="pt-2 flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
                         <div className="flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                            <Calendar className="w-3.5 text-white cursor-pointer h-3.5" />
                             <span className={isOverdue ? 'font-semibold text-rose-600 dark:text-rose-400' : ''}>
                                 {formattedDate}
                             </span>

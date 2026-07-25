@@ -70,15 +70,12 @@ const TaskModal = ({ methods, editingTask, setEditingTask }) => {
 
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)} className="p-6 space-y-4">
-                        {/* Task Title CustomInput */}
                         <CustomInput
                             name="title"
                             label="Task Title"
                             placeholder="Enter task title"
                             rules={{ required: 'Task title is required' }}
                         />
-
-                        {/* Description CustomInput */}
                         <CustomInput
                             name="description"
                             label="Description"
@@ -88,7 +85,7 @@ const TaskModal = ({ methods, editingTask, setEditingTask }) => {
                             rules={{ required: 'Task description is required' }}
                         />
 
-                        {/* Options Grid: Status, Priority, Due Date */}
+
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <SelectBox
                                 name="status"

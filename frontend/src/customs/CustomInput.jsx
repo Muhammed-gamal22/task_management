@@ -56,10 +56,15 @@ const CustomInput = ({
                             <PopoverContent className="w-auto p-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg">
                                 <Calendar
                                     mode="single"
+                                    className="bg-white text-white cursor-pointer dark:bg-slate-900"
                                     selected={field.value ? new Date(field.value) : undefined}
                                     onSelect={(date) => {
                                         if (date) {
-                                            field.onChange(date.toISOString().split('T')[0]);
+                                            const year = date.getFullYear();
+                                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                                            const day = String(date.getDate()).padStart(2, "0");
+
+                                            field.onChange(`${year}-${month}-${day}`);
                                         }
                                     }}
                                     initialFocus
@@ -134,4 +139,4 @@ const CustomInput = ({
     );
 };
 
-export default CustomInput;
+export default CustomInput;

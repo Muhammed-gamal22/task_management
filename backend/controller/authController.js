@@ -2,7 +2,7 @@ const User = require('../models/User');
 const catchAsync = require("../utils/catchAsync")
 const AppError = require("../utils/AppError")
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+
 
 exports.userLogin = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
@@ -47,3 +47,21 @@ exports.register = catchAsync(async (req, res, next) => {
         message: "User registered successfully"
     });
 })
+
+
+exports.protectUserLogin = catchAsync(async (req, res, next) => {
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) {
+        return next(new AppError("Unauthorized access to protect route", 401));
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+        return next(new AppError("The user belonging to this token does no longer exist.", 401));
+    }
+    req.user = user;
+    next();
+}) 
